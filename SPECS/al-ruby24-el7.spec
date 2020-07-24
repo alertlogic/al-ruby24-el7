@@ -54,6 +54,13 @@ if [ "${1}" == 1 ]; then # if install
       ln -s $arg /usr/bin/${bin}
     fi
   done
+  # add man pages
+  if ! egrep -q "^\s*MANDATORY_MANPATH\s*/opt/rh/rh-ruby24/root/usr/local/share/man\s*$" /etc/man_db.conf; then
+    echo "MANDATORY_MANPATH                       /opt/rh/rh-ruby24/root/usr/local/share/man" >> /etc/man_db.conf
+  fi
+  if ! egrep -q "^\s*MANDATORY_MANPATH\s*/opt/rh/rh-ruby24/root/usr/share/man\s*$" /etc/man_db.conf; then
+    echo "MANDATORY_MANPATH                       /opt/rh/rh-ruby24/root/usr/share/man" >> /etc/man_db.conf
+  fi
   # update libraries
   ldconfig
   # install gems
@@ -85,6 +92,9 @@ install -m 755 %{name}.sh %{buildroot}/usr/local/sbin/%{name}.sh
 
 %preun
 if [ $1 == 0 ]; then
+  # remove man pages
+  sed -i '/^\s*MANDATORY_MANPATH\s*\/opt\/rh\/rh-ruby24\/root\/usr\/local\/share\/man\s*$/d' /etc/man_db.conf
+  sed -i '/^\s*MANDATORY_MANPATH\s*\/opt\/rh\/rh-ruby24\/root\/usr\/share\/man\s*$/d' /etc/man_db.conf
   # remove symlinks
   for arg in $(ls /opt/rh/rh-ruby24/root/bin/*); do
     bin=$(basename $arg)
