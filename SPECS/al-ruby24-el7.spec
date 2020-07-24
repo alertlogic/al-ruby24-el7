@@ -25,7 +25,6 @@ Requires(pre):   make
 Requires(pre):   libffi-devel
 Requires(pre):   rpm-build
 
-
 %description
 Install and configure al-ruby24-el7
 
